@@ -13,7 +13,8 @@ const prometheus = require('prom-client'),
     scopedLogger = require('../util/scopedLogger.js'),
     helpers = require('../util/helpers.js'),
     predicates = require('./predicates.js'),
-    imposterPrinter = require('./imposterPrinter.js');
+    imposterPrinter = require('./imposterPrinter.js'),
+    cachedObjects = {};
 
 /**
  * Create the imposter
@@ -146,20 +147,14 @@ async function create (Protocol, creationRequest, baseLogger, config, isAllowedC
     }
 
     function metricsAlreadyCreated() {
-        return !!prometheus.register.getSingleMetric('mb_predicate_match_duration_seconds')
+        return !!cachedObjects.metrics
     }
     function getCreatedMetrics() {
-        return {
-            predicateMatchDuration: prometheus.register.getSingleMetric('mb_predicate_match_duration_seconds'),
-            noMatchCount: prometheus.register.getSingleMetric('mb_no_match_total'),
-            requestCount: prometheus.register.getSingleMetric('mb_request_total'),
-            responseGenerationDuration: prometheus.register.getSingleMetric('mb_response_generation_duration_seconds'),
-            blockedIPCount: prometheus.register.getSingleMetric('mb_blocked_ip_total')
-        };
+        return cachedObjects.metrics
     }
 
     function createImposterMetrics() {
-        return {
+        const metrics = {
             predicateMatchDuration: new prometheus.Histogram({
                 name: 'mb_predicate_match_duration_seconds',
                 help: 'Time it takes to match the predicates and select a stub',
@@ -188,6 +183,10 @@ async function create (Protocol, creationRequest, baseLogger, config, isAllowedC
                 labelNames: ['imposter']
             })
         };
+
+        cachedObjects.metrics = metrics
+
+        return cachedObjects.metrics
     }
 
     return new Promise((resolve, reject) => {
