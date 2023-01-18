@@ -147,14 +147,14 @@ async function create (Protocol, creationRequest, baseLogger, config, isAllowedC
     }
 
     function metricsAlreadyCreated() {
-        return !!cachedObjects.metrics
+        return Boolean(cachedObjects.metrics)
     }
     function getCreatedMetrics() {
         return cachedObjects.metrics
     }
 
     function createImposterMetrics() {
-        const metrics = {
+        const impostersMetrics = {
             predicateMatchDuration: new prometheus.Histogram({
                 name: 'mb_predicate_match_duration_seconds',
                 help: 'Time it takes to match the predicates and select a stub',
@@ -184,7 +184,7 @@ async function create (Protocol, creationRequest, baseLogger, config, isAllowedC
             })
         };
 
-        cachedObjects.metrics = metrics
+        cachedObjects.metrics = impostersMetrics
 
         return cachedObjects.metrics
     }
