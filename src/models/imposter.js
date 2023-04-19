@@ -27,7 +27,7 @@ const prometheus = require('prom-client'),
  */
 async function create (Protocol, creationRequest, baseLogger, config, isAllowedConnection) {
 
-    const metrics = getMetrics() 
+    const metrics = getMetrics();
 
     function scopeFor (port) {
         let scope = `${creationRequest.protocol}:${port}`;
@@ -142,18 +142,18 @@ async function create (Protocol, creationRequest, baseLogger, config, isAllowedC
         numberOfRequests = 0;
     }
 
-    function getMetrics() {
-        return metricsAlreadyCreated() ? getCreatedMetrics() : createImposterMetrics()
+    function getMetrics () {
+        return metricsAlreadyCreated() ? getCreatedMetrics() : createImposterMetrics();
     }
 
-    function metricsAlreadyCreated() {
-        return Boolean(cachedObjects.metrics)
+    function metricsAlreadyCreated () {
+        return Boolean(cachedObjects.metrics);
     }
-    function getCreatedMetrics() {
-        return cachedObjects.metrics
+    function getCreatedMetrics () {
+        return cachedObjects.metrics;
     }
 
-    function createImposterMetrics() {
+    function createImposterMetrics () {
         const impostersMetrics = {
             predicateMatchDuration: new prometheus.Histogram({
                 name: 'mb_predicate_match_duration_seconds',
@@ -184,9 +184,9 @@ async function create (Protocol, creationRequest, baseLogger, config, isAllowedC
             })
         };
 
-        cachedObjects.metrics = impostersMetrics
+        cachedObjects.metrics = impostersMetrics;
 
-        return cachedObjects.metrics
+        return cachedObjects.metrics;
     }
 
     return new Promise((resolve, reject) => {
