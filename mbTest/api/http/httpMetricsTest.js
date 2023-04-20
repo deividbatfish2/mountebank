@@ -47,5 +47,18 @@ describe('Metrics', function () {
             assert.doesNotMatch(response.body, /mb_no_match_total{.*imposter.+}/);
             assert.doesNotMatch(response.body, /mb_response_generation_duration_seconds.+{.+imposter.+}/);
         });
+
+        it('should return imposter metrics after imposters calls', async function () {
+            const imposterPort = port + 1;
+            const request = { protocol, port: imposterPort };
+            await api.createImposter(request);
+            await client.get(api.url, imposterPort);
+
+            const response = await client.get('/metrics', api.port);
+
+            assert.match(response.body, /mb_predicate_match_duration_seconds.+{.+imposter.+}/);
+            assert.match(response.body, /mb_no_match_total{.*imposter.+}/);
+            assert.match(response.body, /mb_response_generation_duration_seconds.+{.+imposter.+}/);
+        });
     });
 });
